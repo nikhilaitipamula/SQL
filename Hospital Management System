@@ -1,0 +1,49 @@
+CREATE DATABASE HospitalDB;
+USE HospitalDB;
+
+-- Patients Table
+CREATE TABLE Patients (
+    patient_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    age INT NOT NULL,
+    gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    contact VARCHAR(15) NOT NULL
+);
+
+-- Doctors Table
+CREATE TABLE Doctors (
+    doctor_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    specialization VARCHAR(100) NOT NULL,
+    contact VARCHAR(15) NOT NULL
+);
+
+-- Appointments Table
+CREATE TABLE Appointments (
+    appointment_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id INT,
+    doctor_id INT,
+    appointment_date DATE NOT NULL,
+    status ENUM('Scheduled', 'Completed', 'Cancelled') DEFAULT 'Scheduled',
+    FOREIGN KEY (patient_id) REFERENCES Patients(patient_id) ON DELETE CASCADE,
+    FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id) ON DELETE CASCADE
+);
+
+-- Insert Sample Data
+INSERT INTO Patients (name, age, gender, contact) VALUES 
+('John Doe', 30, 'Male', '123-456-7890'),
+('Jane Smith', 25, 'Female', '987-654-3210');
+
+INSERT INTO Doctors (name, specialization, contact) VALUES 
+('Dr. Alice Brown', 'Cardiology', '555-123-4567'),
+('Dr. Bob Green', 'Neurology', '555-987-6543');
+
+INSERT INTO Appointments (patient_id, doctor_id, appointment_date) VALUES 
+(1, 1, '2025-03-01'),
+(2, 2, '2025-03-05');
+
+-- Fetch All Appointments
+SELECT a.appointment_id, p.name AS Patient, d.name AS Doctor, a.appointment_date, a.status 
+FROM Appointments a
+JOIN Patients p ON a.patient_id = p.patient_id
+JOIN Doctors d ON a.doctor_id = d.doctor_id;
